@@ -1,15 +1,16 @@
 mod boid;
 
 use boid::Boid;
-
 use macroquad::prelude::*;
+
+const NUM_BOIDS: usize = 100;
 
 #[macroquad::main("MyGame")]
 async fn main() {
-    let mut boids = Vec::new();
+    let mut boids = Vec::with_capacity(NUM_BOIDS);
 
     // Initialize boids
-    for _ in 0..100 {
+    for _ in 0..NUM_BOIDS {
         let position = vec2(
             rand::gen_range(0.0, screen_width()),
             rand::gen_range(0.0, screen_height()),
