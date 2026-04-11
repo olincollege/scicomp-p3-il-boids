@@ -57,7 +57,7 @@ impl Boid {
         let mut total_gradient = Vec2::ZERO;
         for boid in boids {
             let (norm_dist, grad) = Self::sigma_calc(self.position, boid.position);
-            let action = self.action_function(norm_dist);
+            let action = Self::action_function(norm_dist);
             total_gradient += action * grad;
         }
         return total_gradient;
@@ -88,7 +88,7 @@ impl Boid {
     }
 
     /// Performs attraction and repulstion based on the normalized distance to another boid.
-    fn action_function(&self, norm_dist: f32) -> f32 {
+    fn action_function(norm_dist: f32) -> f32 {
         let z = norm_dist - DESIRED_DISTANCE;
         let c = (ATTRACTION_GAIN - REPULSION_GAIN).abs() / (4.0 * ATTRACTION_GAIN * REPULSION_GAIN);
         let phi = 0.5
