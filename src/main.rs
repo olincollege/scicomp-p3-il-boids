@@ -5,7 +5,17 @@ use macroquad::prelude::*;
 
 const NUM_BOIDS: usize = 100;
 
-#[macroquad::main("MyGame")]
+fn window_conf() -> Conf {
+    Conf {
+        window_title: "Boid Simulation".to_string(),
+        window_width: 1200,
+        window_height: 800,
+        fullscreen: false,
+        ..Default::default()
+    }
+}
+
+#[macroquad::main(window_conf)]
 async fn main() {
     let mut boids = Vec::with_capacity(NUM_BOIDS);
 
