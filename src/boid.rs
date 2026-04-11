@@ -19,7 +19,7 @@ impl Boid {
 
     pub fn draw(&self) {
         // Isosceles triangle
-        const BASE: f32 = 8.0;
+        const BASE: f32 = 10.0;
         const HEIGHT: f32 = 18.0;
 
         let forward = self.velocity.normalize_or_zero();
@@ -28,7 +28,7 @@ impl Boid {
         let left_base = self.position - forward * HEIGHT / 2.0 - right * BASE / 2.0;
         let right_base = self.position - forward * HEIGHT / 2.0 + right * BASE / 2.0;
 
-        draw_triangle(tip, left_base, right_base, DARKGRAY);
+        draw_triangle(tip, left_base, right_base, BLACK);
     }
 
     pub fn update(&mut self, boids: &[Boid], dt: f32) {
