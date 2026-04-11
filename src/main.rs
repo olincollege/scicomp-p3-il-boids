@@ -1,5 +1,7 @@
 mod boid;
 
+use boid::Boid;
+
 use macroquad::prelude::*;
 
 #[macroquad::main("MyGame")]
@@ -16,16 +18,20 @@ async fn main() {
             rand::gen_range(-100.0, 100.0),
             rand::gen_range(-100.0, 100.0),
         );
-        boids.push(boid::Boid::new(position, velocity));
+        boids.push(Boid::new(position, velocity));
     }
+
+    let mut boids_prior: Vec<Boid> = vec![];
 
     loop {
         let dt = get_frame_time();
         clear_background(WHITE);
-        let prev_boids = boids.clone();
+
+        // Snapshot of current boid state for use in updates
+        boids_prior.clone_from(&boids);
 
         for boid in &mut boids {
-            boid.update(&prev_boids, dt);
+            boid.update(&boids_prior, dt);
         }
 
         for boid in &boids {
