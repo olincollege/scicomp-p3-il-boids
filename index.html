@@ -24,7 +24,9 @@
     <!-- Minified and statically hosted version of https://github.com/not-fl3/macroquad/blob/master/js/mq_js_bundle.js -->
     <script src="mq_js_bundle.js"></script>
     <script>
-      load("scicomp-p3-il-boids.wasm");
+      window.addEventListener("load", () => {
+        load("scicomp-p3-il-boids.wasm");
+      });
     </script>
     <!-- Your compiled WASM binary -->
   </body>
