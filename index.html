@@ -1,15 +1,13 @@
-<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Boid Simulation</title>
     <style>
       html,
       body,
       canvas {
-        margin: 0;
-        padding: 0;
+        margin: 0px;
+        padding: 0px;
         width: 100%;
         height: 100%;
         overflow: hidden;
@@ -22,12 +20,10 @@
   <body>
     <canvas id="glcanvas" tabindex="1"></canvas>
     <!-- Minified and statically hosted version of https://github.com/not-fl3/macroquad/blob/master/js/mq_js_bundle.js -->
-    <script src="mq_js_bundle.js" defer></script>
+    <script src="https://not-fl3.github.io/miniquad-samples/mq_js_bundle.js"></script>
     <script>
-      window.addEventListener("load", () => {
-        load("scicomp-p3-il-boids.wasm");
-      });
+      load("scicomp-p3-il-boids.wasm");
     </script>
-    <!-- Your compiled WASM binary -->
+    <!-- Your compiled wasm file -->
   </body>
 </html>
