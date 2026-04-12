@@ -1,7 +1,0 @@
-[package]
-name = "scicomp-p3-il-boids"
-version = "0.1.0"
-edition = "2024"
-
-[dependencies]
-macroquad = "0.4.14"
