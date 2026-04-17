@@ -3,7 +3,7 @@ mod boid;
 use boid::Boid;
 use macroquad::prelude::*;
 
-const NUM_BOIDS: usize = 100;
+const NUM_BOIDS: usize = 250;
 
 fn window_conf() -> Conf {
     Conf {
