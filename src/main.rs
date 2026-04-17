@@ -19,16 +19,19 @@ fn window_conf() -> Conf {
 async fn main() {
     let mut boids = Vec::with_capacity(NUM_BOIDS);
 
+    rand::srand(42);
+
     // Initialize boids
     for _ in 0..NUM_BOIDS {
         let position = vec2(
             rand::gen_range(0.0, screen_width()),
             rand::gen_range(0.0, screen_height()),
         );
-        let velocity = vec2(
-            rand::gen_range(-100.0, 100.0),
-            rand::gen_range(-100.0, 100.0),
-        );
+
+        const INITIAL_SPEED: f32 = 100.0;
+        let velocity =
+            Vec2::from_angle(rand::gen_range(0.0, 2.0 * std::f32::consts::PI)) * INITIAL_SPEED;
+
         boids.push(Boid::new(position, velocity));
     }
 
