@@ -33,26 +33,21 @@ impl Boid {
 
     pub fn update(&mut self, boids: &[Boid], dt: f32) {
         self.velocity += self.alg_1(boids) * dt;
+
+        // Limit speed
+        const MAX_SPEED: f32 = 600.0;
+        if self.velocity.length() > MAX_SPEED {
+            self.velocity = self.velocity.normalize() * MAX_SPEED;
+        }
+
         self.position += self.velocity * dt;
-
-        if self.position.x < 0.0 {
-            self.position.x += screen_width();
-        } else if self.position.x > screen_width() {
-            self.position.x -= screen_width();
-        }
-
-        if self.position.y < 0.0 {
-            self.position.y += screen_height();
-        } else if self.position.y > screen_height() {
-            self.position.y -= screen_height();
-        }
     }
 
     fn alg_1(&self, boids: &[Boid]) -> Vec2 {
         return (
             // self.gradient_term(boids)
             // + self.consensus_term(boids)
-            self.fly_to_center(boids)
+            self.fly_to_center(boids) + self.keep_within_bounds()
         );
     }
 
@@ -78,7 +73,6 @@ impl Boid {
 
     fn fly_to_center(&self, boids: &[Boid]) -> Vec2 {
         const CENTERING_FACTOR: f32 = 8.0;
-        // println!("======= Self: {:?} ======", self.position);
 
         // Fly the to center which is a weighted average of other birds in the range, based on bump(sigma dist)
         let mut center = Vec2::ZERO;
@@ -89,7 +83,6 @@ impl Boid {
             }
             let (norm_dist, _) = Self::sigma_calc(self.position, boid.position);
             let weight = Self::bump(norm_dist / ATTRACTION_RANGE);
-            // println!("Boid at {:?} has weight {:.3}", boid.position, weight);
             center += weight * boid.position;
             total_weight += weight;
         }
@@ -100,8 +93,28 @@ impl Boid {
 
         center /= total_weight;
 
-        // println!("Center: {:?}, Self: {:?}", center, self.position);
         return (center - self.position) * CENTERING_FACTOR;
+    }
+
+    fn keep_within_bounds(&self) -> Vec2 {
+        const MARGIN: f32 = 200.0;
+        const BOUNDARY_FORCE: f32 = 100.0;
+
+        let mut force = Vec2::ZERO;
+
+        if self.position.x < MARGIN {
+            force.x += BOUNDARY_FORCE;
+        } else if self.position.x > screen_width() - MARGIN {
+            force.x -= BOUNDARY_FORCE;
+        }
+
+        if self.position.y < MARGIN {
+            force.y += BOUNDARY_FORCE;
+        } else if self.position.y > screen_height() - MARGIN {
+            force.y -= BOUNDARY_FORCE;
+        }
+
+        return force;
     }
 
     /// Calculates sigma normlized distance and gradient vector between two points.
