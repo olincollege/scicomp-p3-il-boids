@@ -1,7 +1,7 @@
 use macroquad::prelude::*;
 
 pub const DESIRED_DISTANCE: f32 = 50.0;
-pub const ATTRACTION_RANGE: f32 = 100.0;
+pub const ATTRACTION_RANGE: f32 = 1000.0;
 pub const ATTRACTION_GAIN: f32 = 1.0;
 pub const REPULSION_GAIN: f32 = 1.0;
 pub const BUMP_FLATNESS: f32 = 0.5;
@@ -49,7 +49,11 @@ impl Boid {
     }
 
     fn alg_1(&self, boids: &[Boid]) -> Vec2 {
-        return self.gradient_term(boids) + self.consensus_term(boids);
+        return (
+            // self.gradient_term(boids)
+            // + self.consensus_term(boids)
+            self.fly_to_center(boids)
+        );
     }
 
     /// Calculate full gradient term for a boid based on all other boids in the system.
@@ -70,6 +74,34 @@ impl Boid {
             total_consensus += adjacency * (boid.velocity - self.velocity);
         }
         return total_consensus;
+    }
+
+    fn fly_to_center(&self, boids: &[Boid]) -> Vec2 {
+        const CENTERING_FACTOR: f32 = 8.0;
+        // println!("======= Self: {:?} ======", self.position);
+
+        // Fly the to center which is a weighted average of other birds in the range, based on bump(sigma dist)
+        let mut center = Vec2::ZERO;
+        let mut total_weight = 0.0;
+        for boid in boids {
+            if std::ptr::eq(boid, self) {
+                continue;
+            }
+            let (norm_dist, _) = Self::sigma_calc(self.position, boid.position);
+            let weight = Self::bump(norm_dist / ATTRACTION_RANGE);
+            // println!("Boid at {:?} has weight {:.3}", boid.position, weight);
+            center += weight * boid.position;
+            total_weight += weight;
+        }
+
+        if total_weight == 0.0 {
+            return Vec2::ZERO;
+        }
+
+        center /= total_weight;
+
+        // println!("Center: {:?}, Self: {:?}", center, self.position);
+        return (center - self.position) * CENTERING_FACTOR;
     }
 
     /// Calculates sigma normlized distance and gradient vector between two points.
