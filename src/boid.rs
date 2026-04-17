@@ -1,10 +1,10 @@
 use macroquad::prelude::*;
 
-pub const DESIRED_DISTANCE: f32 = 50.0;
-pub const ATTRACTION_RANGE: f32 = 1000.0;
+pub const DESIRED_DISTANCE: f32 = 100.0;
+pub const ATTRACTION_RANGE: f32 = 200.0;
 pub const ATTRACTION_GAIN: f32 = 1.0;
 pub const REPULSION_GAIN: f32 = 1.0;
-pub const BUMP_FLATNESS: f32 = 0.5;
+pub const BUMP_FLATNESS: f32 = 0.2;
 
 #[derive(Clone)]
 pub struct Boid {
@@ -32,23 +32,37 @@ impl Boid {
     }
 
     pub fn update(&mut self, boids: &[Boid], dt: f32) {
-        self.velocity += self.alg_1(boids) * dt;
+        let gradient = self.gradient_term(boids) * 10.0;
+        let consensus = self.consensus_term(boids) * 0.2;
+        let fly_to_center = self.fly_to_center(boids);
+        let boundary_force = self.keep_within_bounds();
+
+        self.velocity += gradient * dt;
+        self.velocity += consensus * dt;
+        self.velocity += fly_to_center * dt;
+        self.velocity += boundary_force * dt;
+
+        println!(
+            "Gradient: {:<10.2}, Consensus: {:<10.2}, Fly to Center: {:<10.2}, Boundary Force: {:<10.2}",
+            gradient.length(),
+            consensus.length(),
+            fly_to_center.length(),
+            boundary_force.length()
+        );
 
         // Limit speed
-        const MAX_SPEED: f32 = 600.0;
-        if self.velocity.length() > MAX_SPEED {
-            self.velocity = self.velocity.normalize() * MAX_SPEED;
-        }
+        self.velocity = self.limit_speed();
 
         self.position += self.velocity * dt;
     }
 
-    fn alg_1(&self, boids: &[Boid]) -> Vec2 {
-        return (
-            // self.gradient_term(boids)
-            // + self.consensus_term(boids)
-            self.fly_to_center(boids) + self.keep_within_bounds()
-        );
+    fn limit_speed(&self) -> Vec2 {
+        const MAX_SPEED: f32 = 600.0;
+        if self.velocity.length() > MAX_SPEED {
+            self.velocity.normalize() * MAX_SPEED
+        } else {
+            self.velocity
+        }
     }
 
     /// Calculate full gradient term for a boid based on all other boids in the system.
