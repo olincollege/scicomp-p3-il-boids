@@ -3,7 +3,7 @@ mod boid;
 use boid::Boid;
 use macroquad::prelude::*;
 
-const NUM_BOIDS: usize = 250;
+const NUM_BOIDS: usize = 100;
 
 fn window_conf() -> Conf {
     Conf {
@@ -51,6 +51,12 @@ async fn main() {
         for boid in &boids {
             boid.draw();
         }
+
+        println!(
+            "Average normalized deviation energy: {}",
+            Boid::normalized_deviation_energy(&boids_prior)
+        );
+
         next_frame().await
     }
 }

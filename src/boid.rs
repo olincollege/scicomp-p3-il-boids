@@ -1,9 +1,9 @@
 use macroquad::prelude::*;
 
-pub const DESIRED_DISTANCE: f32 = 50.0;
-pub const ATTRACTION_RANGE: f32 = 100.0;
-pub const ATTRACTION_GAIN: f32 = 1.0;
-pub const REPULSION_GAIN: f32 = 1.0;
+pub const DESIRED_DISTANCE: f32 = 100.0;
+pub const ATTRACTION_RANGE: f32 = 200.0;
+pub const ATTRACTION_GAIN: f32 = 5.0;
+pub const REPULSION_GAIN: f32 = 5.0;
 pub const BUMP_FLATNESS: f32 = 0.5;
 
 #[derive(Clone)]
@@ -90,7 +90,8 @@ impl Boid {
     /// Performs attraction and repulstion based on the normalized distance to another boid.
     fn action_function(norm_dist: f32) -> f32 {
         let z = norm_dist - DESIRED_DISTANCE;
-        let c = (ATTRACTION_GAIN - REPULSION_GAIN).abs() / (4.0 * ATTRACTION_GAIN * REPULSION_GAIN);
+        let c = (ATTRACTION_GAIN - REPULSION_GAIN).abs()
+            / (4.0 * ATTRACTION_GAIN * REPULSION_GAIN).sqrt();
         let phi = 0.5
             * ((ATTRACTION_GAIN + REPULSION_GAIN) * Self::sigmoid(z + c)
                 + (ATTRACTION_GAIN - REPULSION_GAIN));
@@ -119,5 +120,26 @@ impl Boid {
         } else {
             0.0
         }
+    }
+
+    pub fn normalized_deviation_energy(boids: &[Boid]) -> f32 {
+        let mut total = 0.0;
+        let mut edge_count = 0;
+
+        for i in 0..boids.len() {
+            for j in (i + 1)..boids.len() {
+                let dist: f32 = (boids[i].position - boids[j].position).length();
+                if dist < ATTRACTION_RANGE {
+                    total += (dist - DESIRED_DISTANCE).powi(2);
+                    edge_count += 1;
+                }
+            }
+        }
+
+        if edge_count == 0 {
+            return 0.0;
+        }
+
+        total / (edge_count as f32 * DESIRED_DISTANCE.powi(2))
     }
 }
