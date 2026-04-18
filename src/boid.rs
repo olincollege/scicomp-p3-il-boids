@@ -56,6 +56,9 @@ impl Boid {
     fn gradient_term(&self, boids: &[Boid]) -> Vec2 {
         let mut total_gradient = Vec2::ZERO;
         for boid in boids {
+            if std::ptr::eq(boid, self) {
+                continue;
+            }
             let (norm_dist, grad) = Self::sigma_calc(self.position, boid.position);
             let action = Self::action_function(norm_dist);
             total_gradient += action * grad;
@@ -66,6 +69,9 @@ impl Boid {
     fn consensus_term(&self, boids: &[Boid]) -> Vec2 {
         let mut total_consensus = Vec2::ZERO;
         for boid in boids {
+            if std::ptr::eq(boid, self) {
+                continue;
+            }
             let adjacency = self.spatial_adjacency_matrix(boid);
             total_consensus += adjacency * (boid.velocity - self.velocity);
         }
