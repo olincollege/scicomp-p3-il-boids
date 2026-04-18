@@ -1,5 +1,10 @@
-use crate::math;
 use macroquad::prelude::*;
+
+pub const DESIRED_DISTANCE: f32 = 50.0;
+pub const ATTRACTION_RANGE: f32 = 100.0;
+pub const ATTRACTION_GAIN: f32 = 1.0;
+pub const REPULSION_GAIN: f32 = 1.0;
+pub const BUMP_FLATNESS: f32 = 0.5;
 
 #[derive(Clone)]
 pub struct Boid {
@@ -51,8 +56,8 @@ impl Boid {
     fn gradient_term(&self, boids: &[Boid]) -> Vec2 {
         let mut total_gradient = Vec2::ZERO;
         for boid in boids {
-            let (norm_dist, grad) = math::sigma_calc(self.position, boid.position);
-            let action = math::action_function(norm_dist);
+            let (norm_dist, grad) = Self::sigma_calc(self.position, boid.position);
+            let action = Self::action_function(norm_dist);
             total_gradient += action * grad;
         }
         return total_gradient;
@@ -67,8 +72,52 @@ impl Boid {
         return total_consensus;
     }
 
+    /// Calculates sigma normlized distance and gradient vector between two points.
+    fn sigma_calc(p1: Vec2, p2: Vec2) -> (f32, Vec2) {
+        const EPSILON: f32 = 0.1;
+        let diff = p2 - p1;
+        let scaling_factor = (1.0 + EPSILON * diff.length_squared()).sqrt();
+
+        // Sigma normalizaed distance
+        let norm = (1.0 / EPSILON) * (scaling_factor - 1.0);
+
+        // Sigma gradient vector
+        let grad = diff / scaling_factor;
+
+        (norm, grad)
+    }
+
+    /// Performs attraction and repulstion based on the normalized distance to another boid.
+    fn action_function(norm_dist: f32) -> f32 {
+        let z = norm_dist - DESIRED_DISTANCE;
+        let c = (ATTRACTION_GAIN - REPULSION_GAIN).abs() / (4.0 * ATTRACTION_GAIN * REPULSION_GAIN);
+        let phi = 0.5
+            * ((ATTRACTION_GAIN + REPULSION_GAIN) * Self::sigmoid(z + c)
+                + (ATTRACTION_GAIN - REPULSION_GAIN));
+        let out = Self::bump(norm_dist / ATTRACTION_RANGE) * phi;
+        return out;
+    }
+
     fn spatial_adjacency_matrix(&self, other: &Boid) -> f32 {
-        let (norm_dist, _) = math::sigma_calc(self.position, other.position);
-        return math::bump(norm_dist / math::ATTRACTION_RANGE);
+        let (norm_dist, _) = Self::sigma_calc(self.position, other.position);
+        return Self::bump(norm_dist / ATTRACTION_RANGE);
+    }
+
+    /// Sigmoid step function
+    fn sigmoid(x: f32) -> f32 {
+        x / (1.0 + x.powi(2)).sqrt()
+    }
+
+    /// Smooths interaction between boids at the edge of the attraction range, preventing "jitter".
+    fn bump(norm_dist: f32) -> f32 {
+        if norm_dist < BUMP_FLATNESS {
+            1.0
+        } else if norm_dist <= 1.0 {
+            0.5 * (1.0
+                + (std::f32::consts::PI * (norm_dist - BUMP_FLATNESS) / (1.0 - BUMP_FLATNESS))
+                    .cos())
+        } else {
+            0.0
+        }
     }
 }

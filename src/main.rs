@@ -1,5 +1,4 @@
 mod boid;
-mod math;
 
 use boid::Boid;
 use macroquad::prelude::*;
