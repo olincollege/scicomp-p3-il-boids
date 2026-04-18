@@ -1,4 +1,6 @@
+use crate::constants::*;
 use crate::math;
+
 use macroquad::prelude::*;
 
 #[derive(Clone)]
@@ -80,8 +82,8 @@ impl Boid {
         for i in 0..boids.len() {
             for j in (i + 1)..boids.len() {
                 let dist: f32 = (boids[i].position - boids[j].position).length();
-                if dist < math::ATTRACTION_RANGE {
-                    total += (dist - math::DESIRED_DISTANCE).powi(2);
+                if dist < ATTRACTION_RANGE {
+                    total += (dist - DESIRED_DISTANCE).powi(2);
                     edge_count += 1;
                 }
             }
@@ -91,7 +93,7 @@ impl Boid {
             return 0.0;
         }
 
-        total / (edge_count as f32 * math::DESIRED_DISTANCE.powi(2))
+        total / (edge_count as f32 * DESIRED_DISTANCE.powi(2))
     }
 
     pub fn normalized_velocity_mismatch(boids: &[Boid]) -> f32 {
@@ -127,7 +129,7 @@ impl Boid {
         for i in 0..n {
             for j in (i + 1)..n {
                 let (norm_dist, _) = math::sigma_calc(boids[i].position, boids[j].position);
-                if norm_dist < math::ATTRACTION_RANGE {
+                if norm_dist < ATTRACTION_RANGE {
                     let ri = find(&mut parent, i);
                     let rj = find(&mut parent, j);
                     if ri != rj {

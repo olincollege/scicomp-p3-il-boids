@@ -1,10 +1,6 @@
 use macroquad::prelude::Vec2;
 
-pub const DESIRED_DISTANCE: f32 = 100.0;
-pub const ATTRACTION_RANGE: f32 = 200.0;
-pub const ATTRACTION_GAIN: f32 = 5.0;
-pub const REPULSION_GAIN: f32 = 8.0;
-pub const BUMP_FLATNESS: f32 = 0.2;
+use crate::constants::*;
 
 /// Calculates sigma normlized distance and gradient vector between two points.
 pub fn sigma_calc(p1: Vec2, p2: Vec2) -> (f32, Vec2) {

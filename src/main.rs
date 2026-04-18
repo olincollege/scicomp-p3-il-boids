@@ -1,4 +1,5 @@
 mod boid;
+mod constants;
 mod math;
 
 use boid::Boid;
