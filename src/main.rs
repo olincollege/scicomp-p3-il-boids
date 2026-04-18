@@ -1,6 +1,7 @@
 mod boid;
 mod constants;
 mod math;
+mod metrics;
 
 use boid::Boid;
 use macroquad::prelude::*;
@@ -56,10 +57,10 @@ async fn main() {
 
         println!(
             "Deviation energy: {:<10.3}, Velocity mismatch: {:<10.3}, Connectivity: {:<10.3}, Cohesion radius: {:<10.3}",
-            Boid::normalized_deviation_energy(&boids_prior),
-            Boid::normalized_velocity_mismatch(&boids_prior),
-            Boid::relative_connectivity(&boids_prior),
-            Boid::cohesion_radius(&boids_prior)
+            metrics::normalized_deviation_energy(&boids_prior),
+            metrics::normalized_velocity_mismatch(&boids_prior),
+            metrics::relative_connectivity(&boids_prior),
+            metrics::cohesion_radius(&boids_prior)
         );
 
         next_frame().await
