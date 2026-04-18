@@ -1,17 +1,19 @@
 mod boid;
 mod constants;
 mod math;
+mod metric_graph;
 mod metrics;
 
 use boid::Boid;
 use macroquad::prelude::*;
+use metric_graph::{MetricGraph, SIDEBAR_WIDTH, draw_sidebar};
 
 const NUM_BOIDS: usize = 100;
 
 fn window_conf() -> Conf {
     Conf {
         window_title: "Boid Simulation".to_string(),
-        window_width: 1200,
+        window_width: 1400,
         window_height: 800,
         fullscreen: false,
         ..Default::default()
@@ -20,14 +22,18 @@ fn window_conf() -> Conf {
 
 #[macroquad::main(window_conf)]
 async fn main() {
-    let mut boids = Vec::with_capacity(NUM_BOIDS);
-
+    // Top level sim setup
     rand::srand(42);
+    let mut sim_time = 0.0_f32;
+    let simulation_width = (screen_width() - SIDEBAR_WIDTH).max(1.0);
 
     // Initialize boids
+    let mut boids = Vec::with_capacity(NUM_BOIDS);
+    let mut boids_prior: Vec<Boid> = vec![];
+
     for _ in 0..NUM_BOIDS {
         let position = vec2(
-            rand::gen_range(0.0, screen_width()),
+            rand::gen_range(0.0, simulation_width),
             rand::gen_range(0.0, screen_height()),
         );
 
@@ -38,30 +44,33 @@ async fn main() {
         boids.push(Boid::new(position, velocity));
     }
 
-    let mut boids_prior: Vec<Boid> = vec![];
+    // Initialize metric graphs
+    let mut graphs = vec![
+        MetricGraph::new("Connectivity", BLACK, Some(1.0)),
+        MetricGraph::new("Cohesion Radius", BLACK, None),
+        MetricGraph::new("Deviation Energy", BLACK, None),
+        MetricGraph::new("Velocity Mismatch", BLACK, None),
+    ];
 
+    // Main Loop
     loop {
         let dt = get_frame_time();
+        sim_time += dt;
         clear_background(WHITE);
 
-        // Snapshot of current boid state for use in updates
+        // Update and draw boids
         boids_prior.clone_from(&boids);
-
         for boid in &mut boids {
-            boid.update(&boids_prior, dt);
-        }
-
-        for boid in &boids {
+            boid.update(&boids_prior, simulation_width, dt);
             boid.draw();
         }
 
-        println!(
-            "Deviation energy: {:<10.3}, Velocity mismatch: {:<10.3}, Connectivity: {:<10.3}, Cohesion radius: {:<10.3}",
-            metrics::normalized_deviation_energy(&boids_prior),
-            metrics::normalized_velocity_mismatch(&boids_prior),
-            metrics::relative_connectivity(&boids_prior),
-            metrics::cohesion_radius(&boids_prior)
-        );
+        // Update and draw metric graphs
+        graphs[0].push(sim_time, metrics::relative_connectivity(&boids));
+        graphs[1].push(sim_time, metrics::cohesion_radius(&boids));
+        graphs[2].push(sim_time, metrics::normalized_deviation_energy(&boids));
+        graphs[3].push(sim_time, metrics::normalized_velocity_mismatch(&boids));
+        draw_sidebar(&graphs);
 
         next_frame().await
     }

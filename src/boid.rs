@@ -27,14 +27,14 @@ impl Boid {
         draw_triangle(tip, left_base, right_base, BLACK);
     }
 
-    pub fn update(&mut self, boids: &[Boid], dt: f32) {
+    pub fn update(&mut self, boids: &[Boid], sim_width: f32, dt: f32) {
         self.velocity += self.alg_1(boids) * dt;
         self.position += self.velocity * dt;
 
         if self.position.x < 0.0 {
-            self.position.x += screen_width();
-        } else if self.position.x > screen_width() {
-            self.position.x -= screen_width();
+            self.position.x += sim_width;
+        } else if self.position.x > sim_width {
+            self.position.x -= sim_width;
         }
 
         if self.position.y < 0.0 {
