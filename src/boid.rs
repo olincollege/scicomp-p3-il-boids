@@ -142,4 +142,17 @@ impl Boid {
 
         total / (edge_count as f32 * DESIRED_DISTANCE.powi(2))
     }
+
+    pub fn normalized_velocity_mismatch(boids: &[Boid]) -> f32 {
+        let mut total = 0.0;
+
+        let avg_velocity =
+            boids.iter().fold(Vec2::ZERO, |acc, b| acc + b.velocity) / (boids.len() as f32);
+
+        for boid in boids {
+            total += (boid.velocity - avg_velocity).length_squared();
+        }
+
+        return total / (boids.len() as f32 * 2.0);
+    }
 }

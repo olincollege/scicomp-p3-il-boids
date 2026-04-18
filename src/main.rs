@@ -53,8 +53,9 @@ async fn main() {
         }
 
         println!(
-            "Average normalized deviation energy: {}",
-            Boid::normalized_deviation_energy(&boids_prior)
+            "Deviation energy: {:<10.4}, Velocity mismatch: {:<10.4}",
+            Boid::normalized_deviation_energy(&boids_prior),
+            Boid::normalized_velocity_mismatch(&boids_prior)
         );
 
         next_frame().await
