@@ -191,4 +191,13 @@ impl Boid {
         let rank = n - flocks;
         rank as f32 / (n - 1) as f32
     }
+
+    pub fn cohesion_radius(boids: &[Boid]) -> f32 {
+        let center = boids.iter().fold(Vec2::ZERO, |acc, b| acc + b.position) / boids.len() as f32;
+
+        boids
+            .iter()
+            .map(|b| (b.position - center).length())
+            .fold(0.0f32, f32::max)
+    }
 }
