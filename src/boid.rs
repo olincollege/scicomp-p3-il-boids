@@ -155,4 +155,40 @@ impl Boid {
 
         return total / (boids.len() as f32 * 2.0);
     }
+
+    pub fn relative_connectivity(boids: &[Boid]) -> f32 {
+        let n = boids.len();
+        if n <= 1 {
+            return 1.0;
+        }
+
+        // Define union-find
+        let mut parent: Vec<usize> = (0..n).collect();
+
+        fn find(parent: &mut Vec<usize>, x: usize) -> usize {
+            if parent[x] != x {
+                parent[x] = find(parent, parent[x]);
+            }
+            parent[x]
+        }
+
+        // Link boids within attraction range
+        for i in 0..n {
+            for j in (i + 1)..n {
+                let (norm_dist, _) = Boid::sigma_calc(boids[i].position, boids[j].position);
+                if norm_dist < ATTRACTION_RANGE {
+                    let ri = find(&mut parent, i);
+                    let rj = find(&mut parent, j);
+                    if ri != rj {
+                        parent[ri] = rj;
+                    }
+                }
+            }
+        }
+
+        // Filter uniques
+        let flocks = (0..n).filter(|&i| find(&mut parent, i) == i).count();
+        let rank = n - flocks;
+        rank as f32 / (n - 1) as f32
+    }
 }
