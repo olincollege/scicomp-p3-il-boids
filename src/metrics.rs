@@ -4,6 +4,13 @@ use crate::math;
 
 use macroquad::prelude::Vec2;
 
+/// Computes connectivity with the equation `(n - c) / (n - 1)`.
+/// `n` is the total number of boids,
+/// `c` is the number of flocks (or components from the Laplacian).
+///
+/// Bypasses calculating the full Laplacian and instead uses union-find to count number of flocks.
+/// Returns value between `1.0` and `0.0`.`1.0` when all boids are in a single flock, and `0.0`
+/// when all boids are isolated.
 pub fn relative_connectivity(boids: &[Boid]) -> f32 {
     let n = boids.len();
     if n <= 1 {
@@ -40,15 +47,27 @@ pub fn relative_connectivity(boids: &[Boid]) -> f32 {
     rank as f32 / (n - 1) as f32
 }
 
+/// Computes cohesion radius, the maximum distance from the flock center to any boid in the system.
+///
+/// Return value in macroquad screen coord units (pixels).
 pub fn cohesion_radius(boids: &[Boid]) -> f32 {
+    // Average position of all boids
     let center = boids.iter().fold(Vec2::ZERO, |acc, b| acc + b.position) / boids.len() as f32;
 
+    // Take max distance a boid is from center
     boids
         .iter()
         .map(|b| (b.position - center).length())
         .fold(0.0f32, f32::max)
 }
 
+/// Computes deviation energy based on position of all boids in system.
+///
+/// For each boid, calculates squared deviation from desired distance to all other boids within
+/// attraction range. Averages over all pairs and normalizes by `DESIRED_DISTANCE^2`.
+///
+/// Returns positive value roughly below `1.0` (not mathematically bounded) where `0.0` indicates
+/// all boids are exactly at desired distance from each other.
 pub fn normalized_deviation_energy(boids: &[Boid]) -> f32 {
     let mut total = 0.0;
     let mut edge_count = 0;
@@ -70,15 +89,19 @@ pub fn normalized_deviation_energy(boids: &[Boid]) -> f32 {
     total / (edge_count as f32 * DESIRED_DISTANCE.powi(2))
 }
 
+/// Computes average velocity mismatch energy for the system average squared difference of each
+/// boid's velocity from the average velocity of the system.
+///
+/// Return value is in units of pixels^2 / seconds^2.
 pub fn normalized_velocity_mismatch(boids: &[Boid]) -> f32 {
-    let mut total = 0.0;
-
     let avg_velocity =
         boids.iter().fold(Vec2::ZERO, |acc, b| acc + b.velocity) / (boids.len() as f32);
 
-    for boid in boids {
-        total += (boid.velocity - avg_velocity).length_squared();
-    }
+    let mismatch_energy: f32 = boids
+        .iter()
+        .map(|boid| (boid.velocity - avg_velocity).length_squared())
+        .sum::<f32>()
+        / 2.0;
 
-    return total / (boids.len() as f32 * 2.0);
+    mismatch_energy / boids.len() as f32
 }
