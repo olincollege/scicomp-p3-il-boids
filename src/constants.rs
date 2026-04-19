@@ -6,7 +6,7 @@ pub const DESIRED_DISTANCE: f32 = 70.0;
 /// Interaction range multiplier (ATTRACTION_RANGE = DESIRED_DISTANCE * KAPPA)
 pub const DEFAULT_KAPPA: f32 = 1.5;
 pub const KAPPA_STEP: f32 = 0.1;
-pub const MIN_KAPPA: f32 = 0.1;
+pub const MIN_KAPPA: f32 = 1.0;
 pub const MAX_KAPPA: f32 = 3.0;
 
 pub const ATTRACTION_GAIN: f32 = 5.0;
