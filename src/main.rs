@@ -6,7 +6,7 @@ mod metrics;
 
 use boid::Boid;
 use macroquad::prelude::*;
-use metric_graph::{MetricGraph, SIDEBAR_WIDTH, draw_sidebar};
+use metric_graph::{MetricGraph, SIDEBAR_GAP, SIDEBAR_WIDTH, draw_sidebar};
 
 const NUM_BOIDS: usize = 100;
 
@@ -25,7 +25,7 @@ async fn main() {
     // Top level sim setup
     rand::srand(42);
     let mut sim_time = 0.0_f32;
-    let simulation_width = (screen_width() - SIDEBAR_WIDTH).max(1.0);
+    let simulation_width = (screen_width() - SIDEBAR_WIDTH - SIDEBAR_GAP).max(1.0);
 
     // Initialize boids
     let mut boids = Vec::with_capacity(NUM_BOIDS);

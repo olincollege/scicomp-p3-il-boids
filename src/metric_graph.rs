@@ -1,6 +1,7 @@
 use macroquad::prelude::*;
 
 pub const SIDEBAR_WIDTH: f32 = 320.0;
+pub const SIDEBAR_GAP: f32 = 20.0;
 
 pub struct MetricGraph {
     label: &'static str,
