@@ -1,6 +1,6 @@
 // ==== SIMULATION CONTROL CONSTANTS ====
-pub const DESIRED_DISTANCE: f32 = 100.0;
-pub const ATTRACTION_RANGE: f32 = 200.0;
+pub const DESIRED_DISTANCE: f32 = 50.0;
+pub const ATTRACTION_RANGE: f32 = 100.0;
 pub const ATTRACTION_GAIN: f32 = 5.0;
 pub const REPULSION_GAIN: f32 = 8.0;
 /// Set to 0.2 in paper
@@ -12,11 +12,11 @@ pub const SIGMA_EPSILON: f32 = 0.1;
 pub const NUM_BOIDS: usize = 100;
 pub const INITIAL_SPEED: f32 = 50.0;
 
-pub const TARGET_SPEED: f32 = 100.0;
+pub const TARGET_SPEED: f32 = 50.0;
 pub const TARGET_SPEED_GAIN: f32 = 5.0;
 
 // ==== BORDER AVOIDANCE ====
-pub const BORDER_THRESHOLD: f32 = 50.0;
+pub const BORDER_THRESHOLD: f32 = 100.0;
 pub const BORDER_AVOIDANCE_GAIN: f32 = 30.0;
 
 // ==== BOID TRIANGLE SHAPE ====
