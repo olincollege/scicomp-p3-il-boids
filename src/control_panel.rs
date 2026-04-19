@@ -49,7 +49,7 @@ impl ControlPanel {
             &format!("{:.1}", kappa),
             label_x + text_size.width,
             cursor_y,
-            18.0,
+            20.0,
             HIGHLIGHT_COLOR,
         );
         draw_key_hint("[a/d]", cursor_y);
