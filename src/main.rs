@@ -4,6 +4,8 @@ mod math;
 mod metrics;
 mod ui;
 
+use std::f32::MAX;
+
 use boid::Boid;
 use constants::*;
 use macroquad::prelude::*;
@@ -59,8 +61,9 @@ async fn main() {
         sim_time += dt;
         clear_background(WHITE);
 
+        // Handle input
         if is_key_pressed(KeyCode::A) {
-            kappa = (kappa - KAPPA_STEP).max(MIN_KAPPA);
+            kappa = (kappa - KAPPA_STEP).clamp(MIN_KAPPA, MAX_KAPPA);
         }
         if is_key_pressed(KeyCode::D) {
             kappa += KAPPA_STEP;
