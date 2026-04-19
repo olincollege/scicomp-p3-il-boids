@@ -1,11 +1,13 @@
 mod boid;
 mod constants;
+mod control_panel;
 mod math;
 mod metric_graph;
 mod metrics;
 
 use boid::Boid;
 use constants::*;
+use control_panel::{CONTROL_PANEL_HEIGHT, ControlPanel};
 use macroquad::prelude::*;
 use metric_graph::{MetricGraph, draw_sidebar};
 
@@ -46,93 +48,6 @@ fn init_graphs() -> Vec<MetricGraph> {
     ]
 }
 
-fn draw_control_panel(
-    kappa: f32,
-    constant_acceleration: bool,
-    panel_x: f32,
-    panel_y: f32,
-    panel_w: f32,
-) {
-    let panel_h = 140.0;
-
-    draw_rectangle_lines(panel_x, panel_y, panel_w, panel_h, 2.0, LIGHTGRAY);
-
-    let text_x = panel_x + 12.0;
-    let mut cursor_y = panel_y + 22.0;
-
-    draw_text("Controls", text_x, cursor_y, 20.0, DARKGRAY);
-    cursor_y += 22.0;
-
-    draw_text("[a]", text_x, cursor_y, 18.0, DARKGRAY);
-    draw_text(
-        &format!("Interaction Range: {:.1}", kappa),
-        text_x + 40.0,
-        cursor_y,
-        18.0,
-        DARKGRAY,
-    );
-    draw_text("[d]", panel_x + panel_w - 30.0, cursor_y, 18.0, DARKGRAY);
-    cursor_y += 18.0;
-
-    draw_text(
-        "(multiplier on desired distance)",
-        text_x + 40.0,
-        cursor_y,
-        14.0,
-        GRAY,
-    );
-    cursor_y += 22.0;
-
-    let checkbox_size = 14.0;
-    let checkbox_x = text_x;
-    let checkbox_y = cursor_y - checkbox_size + 2.0;
-    draw_rectangle_lines(
-        checkbox_x,
-        checkbox_y,
-        checkbox_size,
-        checkbox_size,
-        1.0,
-        DARKGRAY,
-    );
-    if constant_acceleration {
-        draw_line(
-            checkbox_x + 3.0,
-            checkbox_y + checkbox_size * 0.6,
-            checkbox_x + checkbox_size * 0.45,
-            checkbox_y + checkbox_size - 3.0,
-            2.0,
-            DARKGRAY,
-        );
-        draw_line(
-            checkbox_x + checkbox_size * 0.45,
-            checkbox_y + checkbox_size - 3.0,
-            checkbox_x + checkbox_size - 3.0,
-            checkbox_y + 3.0,
-            2.0,
-            DARKGRAY,
-        );
-    }
-
-    draw_text(
-        "Constant Acceleration",
-        checkbox_x + 24.0,
-        cursor_y,
-        18.0,
-        DARKGRAY,
-    );
-    draw_text("[w]", panel_x + panel_w - 30.0, cursor_y, 18.0, DARKGRAY);
-    cursor_y += 24.0;
-
-    draw_text(
-        "Restart with new parameters",
-        text_x,
-        cursor_y,
-        18.0,
-        DARKGRAY,
-    );
-    draw_text("[r]", panel_x + panel_w - 30.0, cursor_y, 18.0, DARKGRAY);
-}
-
 #[macroquad::main(window_conf)]
 async fn main() {
     // Top level sim setup
@@ -148,6 +63,7 @@ async fn main() {
 
     // Initialize metric graphs
     let mut graphs = init_graphs();
+    let control_panel = ControlPanel::default();
 
     // Main Loop
     loop {
@@ -173,10 +89,7 @@ async fn main() {
 
         let interaction_range = DESIRED_DISTANCE * kappa;
 
-        let panel_x = screen_width() - SIDEBAR_WIDTH + 12.0;
-        let panel_y = 16.0;
-        let panel_w = SIDEBAR_WIDTH - 24.0;
-        draw_control_panel(kappa, constant_acceleration, panel_x, panel_y, panel_w);
+        control_panel.draw(kappa, constant_acceleration);
 
         // Update and draw boids
         boids_prior.clone_from(&boids);
@@ -196,8 +109,7 @@ async fn main() {
             metrics::normalized_deviation_energy(&boids, interaction_range),
         );
         graphs[3].push(sim_time, metrics::normalized_velocity_mismatch(&boids));
-        let control_panel_h = 140.0;
-        draw_sidebar(&graphs, panel_y + control_panel_h + 16.0);
+        draw_sidebar(&graphs, control_panel.y + CONTROL_PANEL_HEIGHT + 16.0);
 
         next_frame().await
     }
