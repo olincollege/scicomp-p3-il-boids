@@ -4,8 +4,6 @@ mod math;
 mod metrics;
 mod ui;
 
-use std::f32::MAX;
-
 use boid::Boid;
 use constants::*;
 use macroquad::prelude::*;
