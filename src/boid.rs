@@ -1,4 +1,6 @@
-use crate::constants::{BOID_BASE, BOID_HEIGHT};
+use crate::constants::{
+    BOID_BASE, BOID_HEIGHT, BORDER_AVOIDANCE_GAIN, BORDER_THRESHOLD, SIDEBAR_MARGIN, SIDEBAR_WIDTH,
+};
 use crate::math;
 
 use macroquad::prelude::*;
@@ -24,10 +26,32 @@ impl Boid {
         draw_triangle(tip, left_base, right_base, BLACK);
     }
 
-    pub fn update(&mut self, boids: &[Boid], sim_width: f32, dt: f32) {
+    pub fn update(&mut self, boids: &[Boid], dt: f32) {
         self.velocity += self.alg_1(boids) * dt;
+        self.velocity += self.avoid_borders() * dt;
         self.position += self.velocity * dt;
+    }
 
+    fn avoid_borders(&self) -> Vec2 {
+        let mut steer = Vec2::ZERO;
+        if self.position.x < BORDER_THRESHOLD {
+            steer.x += BORDER_AVOIDANCE_GAIN;
+        } else if self.position.x
+            > screen_width() - BORDER_THRESHOLD - SIDEBAR_WIDTH - SIDEBAR_MARGIN
+        {
+            steer.x -= BORDER_AVOIDANCE_GAIN;
+        }
+
+        if self.position.y < BORDER_THRESHOLD {
+            steer.y += BORDER_AVOIDANCE_GAIN;
+        } else if self.position.y > screen_height() - BORDER_THRESHOLD {
+            steer.y -= BORDER_AVOIDANCE_GAIN;
+        }
+        return steer;
+    }
+
+    fn wrap_on_edges(&mut self) {
+        let sim_width = screen_width() - BORDER_THRESHOLD - SIDEBAR_WIDTH - SIDEBAR_MARGIN;
         if self.position.x < 0.0 {
             self.position.x += sim_width;
         } else if self.position.x > sim_width {

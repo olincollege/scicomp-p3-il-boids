@@ -59,7 +59,7 @@ async fn main() {
         // Update and draw boids
         boids_prior.clone_from(&boids);
         for boid in &mut boids {
-            boid.update(&boids_prior, simulation_width, dt);
+            boid.update(&boids_prior, dt);
             boid.draw();
         }
 
