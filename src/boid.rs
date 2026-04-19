@@ -1,3 +1,4 @@
+use crate::constants::{BOID_BASE, BOID_HEIGHT};
 use crate::math;
 
 use macroquad::prelude::*;
@@ -14,15 +15,11 @@ impl Boid {
     }
 
     pub fn draw(&self) {
-        // Isosceles triangle
-        const BASE: f32 = 10.0;
-        const HEIGHT: f32 = 18.0;
-
         let forward = self.velocity.normalize_or_zero();
         let right = vec2(-forward.y, forward.x);
-        let tip = self.position + forward * HEIGHT / 2.0;
-        let left_base = self.position - forward * HEIGHT / 2.0 - right * BASE / 2.0;
-        let right_base = self.position - forward * HEIGHT / 2.0 + right * BASE / 2.0;
+        let tip = self.position + forward * BOID_HEIGHT / 2.0;
+        let left_base = self.position - forward * BOID_HEIGHT / 2.0 - right * BOID_BASE / 2.0;
+        let right_base = self.position - forward * BOID_HEIGHT / 2.0 + right * BOID_BASE / 2.0;
 
         draw_triangle(tip, left_base, right_base, BLACK);
     }

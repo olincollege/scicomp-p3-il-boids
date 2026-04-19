@@ -4,12 +4,11 @@ use crate::constants::*;
 
 /// Calculates sigma normlized distance and gradient vector between two points.
 pub fn sigma_calc(p1: Vec2, p2: Vec2) -> (f32, Vec2) {
-    const EPSILON: f32 = 0.1;
     let diff = p2 - p1;
-    let scaling_factor = (1.0 + EPSILON * diff.length_squared()).sqrt();
+    let scaling_factor = (1.0 + SIGMA_EPSILON * diff.length_squared()).sqrt();
 
     // Sigma normalizaed distance
-    let norm = (1.0 / EPSILON) * (scaling_factor - 1.0);
+    let norm = (1.0 / SIGMA_EPSILON) * (scaling_factor - 1.0);
 
     // Sigma gradient vector
     let grad = diff / scaling_factor;

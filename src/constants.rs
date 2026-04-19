@@ -1,5 +1,24 @@
+// ==== SIMULATION CONTROL CONSTANTS ====
 pub const DESIRED_DISTANCE: f32 = 100.0;
 pub const ATTRACTION_RANGE: f32 = 200.0;
 pub const ATTRACTION_GAIN: f32 = 5.0;
 pub const REPULSION_GAIN: f32 = 8.0;
+/// Set to 0.2 in paper
 pub const BUMP_FLATNESS: f32 = 0.2;
+/// Arbitrary small value, set to 0.1 in paper
+pub const SIGMA_EPSILON: f32 = 0.1;
+
+// ==== SIMULATION INITIALIZATION ====
+pub const NUM_BOIDS: usize = 100;
+pub const INITIAL_SPEED: f32 = 100.0;
+
+// ==== BOID TRIANGLE SHAPE ====
+pub const BOID_BASE: f32 = 10.0;
+pub const BOID_HEIGHT: f32 = 18.0;
+
+// ==== WINDOW ====
+pub const WINDOW_WIDTH: i32 = 1400;
+pub const WINDOW_HEIGHT: i32 = 800;
+pub const WINDOW_TITLE: &str = "Boid Simulation";
+pub const SIDEBAR_WIDTH: f32 = 320.0;
+pub const SIDEBAR_MARGIN: f32 = 20.0;

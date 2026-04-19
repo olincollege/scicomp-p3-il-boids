@@ -5,16 +5,15 @@ mod metric_graph;
 mod metrics;
 
 use boid::Boid;
+use constants::*;
 use macroquad::prelude::*;
-use metric_graph::{MetricGraph, SIDEBAR_GAP, SIDEBAR_WIDTH, draw_sidebar};
-
-const NUM_BOIDS: usize = 100;
+use metric_graph::{MetricGraph, draw_sidebar};
 
 fn window_conf() -> Conf {
     Conf {
-        window_title: "Boid Simulation".to_string(),
-        window_width: 1400,
-        window_height: 800,
+        window_title: WINDOW_TITLE.to_string(),
+        window_width: WINDOW_WIDTH,
+        window_height: WINDOW_HEIGHT,
         fullscreen: false,
         ..Default::default()
     }
@@ -25,7 +24,7 @@ async fn main() {
     // Top level sim setup
     rand::srand(42);
     let mut sim_time = 0.0_f32;
-    let simulation_width = (screen_width() - SIDEBAR_WIDTH - SIDEBAR_GAP).max(1.0);
+    let simulation_width = (screen_width() - SIDEBAR_WIDTH - SIDEBAR_MARGIN).max(1.0);
 
     // Initialize boids
     let mut boids = Vec::with_capacity(NUM_BOIDS);
@@ -37,7 +36,6 @@ async fn main() {
             rand::gen_range(0.0, screen_height()),
         );
 
-        const INITIAL_SPEED: f32 = 100.0;
         let velocity =
             Vec2::from_angle(rand::gen_range(0.0, 2.0 * std::f32::consts::PI)) * INITIAL_SPEED;
 
