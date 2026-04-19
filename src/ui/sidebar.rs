@@ -1,6 +1,6 @@
+use super::control_panel::{CONTROL_PANEL_HEIGHT, ControlPanel};
+use super::metric_graph::MetricGraph;
 use crate::constants::{HIGHLIGHT_COLOR, SIDEBAR_WIDTH};
-use crate::control_panel::{CONTROL_PANEL_HEIGHT, ControlPanel};
-use crate::metric_graph::MetricGraph;
 use crate::{Boid, metrics};
 use macroquad::prelude::*;
 

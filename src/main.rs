@@ -1,15 +1,13 @@
 mod boid;
 mod constants;
-mod control_panel;
 mod math;
-mod metric_graph;
 mod metrics;
-mod sidebar;
+mod ui;
 
 use boid::Boid;
 use constants::*;
 use macroquad::prelude::*;
-use sidebar::Sidebar;
+use ui::sidebar::Sidebar;
 
 fn window_conf() -> Conf {
     Conf {
