@@ -127,13 +127,7 @@ fn nice_ceil(value: f32) -> f32 {
 
 pub fn draw_sidebar(graphs: &[MetricGraph]) {
     let panel_x = screen_width() - SIDEBAR_WIDTH;
-    draw_rectangle(
-        panel_x,
-        0.0,
-        SIDEBAR_WIDTH,
-        screen_height(),
-        Color::new(0.95, 0.96, 0.98, 0.92),
-    );
+    draw_line(panel_x, 0.0, panel_x, screen_height(), 1.0, DARKGRAY);
 
     let top = 16.0;
     let bottom = 30.0;
