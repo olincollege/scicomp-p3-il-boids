@@ -12,6 +12,9 @@ pub const SIGMA_EPSILON: f32 = 0.1;
 pub const NUM_BOIDS: usize = 100;
 pub const INITIAL_SPEED: f32 = 50.0;
 
+pub const TARGET_SPEED: f32 = 100.0;
+pub const TARGET_SPEED_GAIN: f32 = 5.0;
+
 // ==== BORDER AVOIDANCE ====
 pub const BORDER_THRESHOLD: f32 = 50.0;
 pub const BORDER_AVOIDANCE_GAIN: f32 = 30.0;

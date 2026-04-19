@@ -1,6 +1,4 @@
-use crate::constants::{
-    BOID_BASE, BOID_HEIGHT, BORDER_AVOIDANCE_GAIN, BORDER_THRESHOLD, SIDEBAR_MARGIN, SIDEBAR_WIDTH,
-};
+use crate::constants::*;
 use crate::math;
 
 use macroquad::prelude::*;
@@ -29,7 +27,16 @@ impl Boid {
     pub fn update(&mut self, boids: &[Boid], dt: f32) {
         self.velocity += self.alg_1(boids) * dt;
         self.velocity += self.avoid_borders() * dt;
+        self.velocity += self.accelerate_to_target_speed() * dt;
         self.position += self.velocity * dt;
+    }
+
+    fn accelerate_to_target_speed(&self) -> Vec2 {
+        let speed = self.velocity.length();
+        if speed < TARGET_SPEED {
+            return self.velocity.normalize_or_zero() * TARGET_SPEED_GAIN;
+        }
+        Vec2::ZERO
     }
 
     fn avoid_borders(&self) -> Vec2 {
