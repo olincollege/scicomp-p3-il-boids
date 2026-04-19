@@ -21,12 +21,12 @@ fn window_conf() -> Conf {
     }
 }
 
-fn init_boids(simulation_width: f32) -> Vec<Boid> {
+fn init_boids() -> Vec<Boid> {
     let mut boids = Vec::with_capacity(NUM_BOIDS);
 
     for _ in 0..NUM_BOIDS {
         let position = vec2(
-            rand::gen_range(0.0, simulation_width),
+            rand::gen_range(0.0, screen_width() - SIDEBAR_WIDTH - SIDEBAR_MARGIN),
             rand::gen_range(0.0, screen_height()),
         );
 
@@ -41,15 +41,14 @@ fn init_boids(simulation_width: f32) -> Vec<Boid> {
 
 #[macroquad::main(window_conf)]
 async fn main() {
-    // Top level sim setup
+    // Sim state variables
     rand::srand(42);
     let mut sim_time = 0.0_f32;
-    let simulation_width = (screen_width() - SIDEBAR_WIDTH - SIDEBAR_MARGIN).max(1.0);
     let mut kappa = DEFAULT_KAPPA;
     let mut constant_acceleration = true;
 
     // Initialize boids
-    let mut boids = init_boids(simulation_width);
+    let mut boids = init_boids();
     let mut boids_prior: Vec<Boid> = vec![];
 
     // Initialize metric graphs
@@ -72,7 +71,7 @@ async fn main() {
             constant_acceleration = !constant_acceleration;
         }
         if is_key_pressed(KeyCode::R) {
-            boids = init_boids(simulation_width);
+            boids = init_boids();
             boids_prior.clear();
             sidebar.reset();
             sim_time = 0.0;
