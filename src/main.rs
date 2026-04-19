@@ -41,10 +41,10 @@ fn init_boids(simulation_width: f32) -> Vec<Boid> {
 
 fn init_graphs() -> Vec<MetricGraph> {
     vec![
-        MetricGraph::new("Connectivity", BLACK, Some(1.0)),
-        MetricGraph::new("Cohesion Radius", BLACK, None),
-        MetricGraph::new("Deviation Energy", BLACK, None),
-        MetricGraph::new("Velocity Mismatch", BLACK, None),
+        MetricGraph::new("Connectivity", HIGHLIGHT_COLOR, Some(1.0)),
+        MetricGraph::new("Cohesion Radius", HIGHLIGHT_COLOR, None),
+        MetricGraph::new("Deviation Energy", HIGHLIGHT_COLOR, None),
+        MetricGraph::new("Velocity Mismatch", HIGHLIGHT_COLOR, None),
     ]
 }
 

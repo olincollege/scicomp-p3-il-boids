@@ -1,6 +1,6 @@
 use macroquad::prelude::*;
 
-use crate::constants::SIDEBAR_WIDTH;
+use crate::constants::{HIGHLIGHT_COLOR, SIDEBAR_WIDTH};
 
 pub const CONTROL_PANEL_HEIGHT: f32 = 140.0;
 
@@ -38,12 +38,19 @@ impl ControlPanel {
         cursor_y += 32.0;
 
         // Interaction range
-        draw_text(
-            &format!("Interaction Range: {:.1}", kappa),
+        let text_size = draw_text(
+            &format!("Interaction Range: "),
             label_x,
             cursor_y,
             18.0,
             DARKGRAY,
+        );
+        draw_text(
+            &format!("{:.1}", kappa),
+            label_x + text_size.width,
+            cursor_y,
+            18.0,
+            HIGHLIGHT_COLOR,
         );
         draw_key_hint("[a/d]", cursor_y);
         cursor_y += 18.0;
@@ -89,7 +96,7 @@ impl ControlPanel {
             checkbox_size,
             checkbox_size,
             1.0,
-            DARKGRAY,
+            HIGHLIGHT_COLOR,
         );
         if checked {
             draw_line(
@@ -98,7 +105,7 @@ impl ControlPanel {
                 checkbox_x + checkbox_size * 0.45,
                 checkbox_y + checkbox_size - 3.0,
                 2.0,
-                DARKGRAY,
+                HIGHLIGHT_COLOR,
             );
             draw_line(
                 checkbox_x + checkbox_size * 0.45,
@@ -106,7 +113,7 @@ impl ControlPanel {
                 checkbox_x + checkbox_size - 3.0,
                 checkbox_y + 3.0,
                 2.0,
-                DARKGRAY,
+                HIGHLIGHT_COLOR,
             );
         }
     }

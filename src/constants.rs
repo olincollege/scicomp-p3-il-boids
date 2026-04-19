@@ -1,3 +1,5 @@
+use macroquad::prelude::Color;
+
 // ==== SIMULATION CONTROL CONSTANTS ====
 pub const DESIRED_DISTANCE: f32 = 70.0;
 
@@ -35,3 +37,4 @@ pub const WINDOW_HEIGHT: i32 = 800;
 pub const WINDOW_TITLE: &str = "Boid Simulation";
 pub const SIDEBAR_WIDTH: f32 = 320.0;
 pub const SIDEBAR_MARGIN: f32 = 20.0;
+pub const HIGHLIGHT_COLOR: Color = Color::from_rgba(240, 158, 22, 255);
