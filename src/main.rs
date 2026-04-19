@@ -4,12 +4,12 @@ mod control_panel;
 mod math;
 mod metric_graph;
 mod metrics;
+mod sidebar;
 
 use boid::Boid;
 use constants::*;
-use control_panel::{CONTROL_PANEL_HEIGHT, ControlPanel};
 use macroquad::prelude::*;
-use metric_graph::{MetricGraph, draw_sidebar};
+use sidebar::Sidebar;
 
 fn window_conf() -> Conf {
     Conf {
@@ -39,15 +39,6 @@ fn init_boids(simulation_width: f32) -> Vec<Boid> {
     boids
 }
 
-fn init_graphs() -> Vec<MetricGraph> {
-    vec![
-        MetricGraph::new("Connectivity", HIGHLIGHT_COLOR, Some(1.0)),
-        MetricGraph::new("Cohesion Radius", HIGHLIGHT_COLOR, None),
-        MetricGraph::new("Deviation Energy", HIGHLIGHT_COLOR, None),
-        MetricGraph::new("Velocity Mismatch", HIGHLIGHT_COLOR, None),
-    ]
-}
-
 #[macroquad::main(window_conf)]
 async fn main() {
     // Top level sim setup
@@ -62,8 +53,7 @@ async fn main() {
     let mut boids_prior: Vec<Boid> = vec![];
 
     // Initialize metric graphs
-    let mut graphs = init_graphs();
-    let control_panel = ControlPanel::default();
+    let mut sidebar = Sidebar::default();
 
     // Main Loop
     loop {
@@ -83,13 +73,11 @@ async fn main() {
         if is_key_pressed(KeyCode::R) {
             boids = init_boids(simulation_width);
             boids_prior.clear();
-            graphs = init_graphs();
+            sidebar.reset();
             sim_time = 0.0;
         }
 
         let interaction_range = DESIRED_DISTANCE * kappa;
-
-        control_panel.draw(kappa, constant_acceleration);
 
         // Update and draw boids
         boids_prior.clone_from(&boids);
@@ -98,18 +86,9 @@ async fn main() {
             boid.draw();
         }
 
-        // Update and draw metric graphs
-        graphs[0].push(
-            sim_time,
-            metrics::relative_connectivity(&boids, interaction_range),
-        );
-        graphs[1].push(sim_time, metrics::cohesion_radius(&boids));
-        graphs[2].push(
-            sim_time,
-            metrics::normalized_deviation_energy(&boids, interaction_range),
-        );
-        graphs[3].push(sim_time, metrics::normalized_velocity_mismatch(&boids));
-        draw_sidebar(&graphs, control_panel.y + CONTROL_PANEL_HEIGHT + 16.0);
+        // Update metric graphs, draw sidebar
+        sidebar.update_metric_graphs(sim_time, &boids, interaction_range);
+        sidebar.draw(kappa, constant_acceleration);
 
         next_frame().await
     }

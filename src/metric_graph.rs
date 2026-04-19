@@ -1,7 +1,5 @@
 use macroquad::prelude::*;
 
-use crate::constants::SIDEBAR_WIDTH;
-
 pub struct MetricGraph {
     label: &'static str,
     color: Color,
@@ -125,21 +123,3 @@ fn nice_ceil(value: f32) -> f32 {
     rounded * base
 }
 
-pub fn draw_sidebar(graphs: &[MetricGraph], top_offset: f32) {
-    let panel_x = screen_width() - SIDEBAR_WIDTH;
-    draw_line(panel_x, 0.0, panel_x, screen_height(), 1.0, DARKGRAY);
-
-    let top = top_offset;
-    let bottom = 30.0;
-    let gap = 40.0;
-    let graph_count = graphs.len().max(1) as f32;
-    let graph_height = (screen_height() - top - bottom - gap * (graph_count - 1.0)) / graph_count;
-
-    for (i, graph) in graphs.iter().enumerate() {
-        let y = top + i as f32 * (graph_height + gap);
-        let x = panel_x + 12.0;
-        let w = SIDEBAR_WIDTH - 24.0;
-        let h = graph_height;
-        graph.draw(x, y, w, h);
-    }
-}
