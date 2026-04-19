@@ -41,14 +41,14 @@ impl MetricGraph {
             return;
         }
 
-        let raw_y_max = self.fixed_max.unwrap_or_else(|| {
-            self.samples
-                .iter()
-                .map(|(_, value)| *value)
-                .fold(0.0_f32, f32::max)
-                .max(1.0)
+        let y_max = self.fixed_max.unwrap_or_else(|| {
+            nice_ceil(
+                self.samples
+                    .iter()
+                    .map(|(_, value)| *value)
+                    .fold(0.0_f32, f32::max),
+            )
         });
-        let y_max = nice_ceil(raw_y_max.max(1e-6));
 
         let top_label_h = 22.0;
 
@@ -115,23 +115,12 @@ impl MetricGraph {
 }
 
 fn nice_ceil(value: f32) -> f32 {
-    if value <= 0.0 {
-        return 1.0;
-    }
-
     let exponent = value.log10().floor();
     let base = 10_f32.powf(exponent);
     let normalized = value / base;
 
-    let rounded = if normalized <= 1.0 {
-        1.0
-    } else if normalized <= 2.0 {
-        2.0
-    } else if normalized <= 5.0 {
-        5.0
-    } else {
-        10.0
-    };
+    // Pick value ~1.2x greater than normalized value
+    let rounded = (normalized * 1.2).ceil();
 
     rounded * base
 }
