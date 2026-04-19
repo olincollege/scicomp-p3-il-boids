@@ -27,6 +27,8 @@ impl MetricGraph {
         // draw_rectangle_lines(x, y, w, h, 1.0, LIGHTGRAY);
 
         let current = self.samples.last().map(|(_, value)| *value).unwrap_or(0.0);
+
+        // Header
         draw_text(
             &format!("{}: {:.3}", self.label, current),
             x + 6.0,
@@ -48,36 +50,31 @@ impl MetricGraph {
         });
         let y_max = nice_ceil(raw_y_max.max(1e-6));
 
-        let left_label_w = 52.0;
-        let right_label_w = 52.0;
-        let top_label_h = 28.0;
-        let bottom_label_h = 18.0;
+        let top_label_h = 22.0;
 
+        // Actual line plot area, not including header
         let plot_x = x;
-        let plot_y = y;
+        let plot_y = y + top_label_h;
         let plot_w = w;
-        let plot_h = h;
+        let plot_h = h - top_label_h;
 
-        draw_line(
-            plot_x,
-            plot_y + plot_h,
-            plot_x + plot_w,
-            plot_y + plot_h,
-            1.0,
-            GRAY,
-        );
+        // Graph box
+        draw_rectangle_lines(plot_x, plot_y, plot_w, plot_h, 2.0, LIGHTGRAY);
 
         let label_color = DARKGRAY;
         let label_size = 16.0;
 
+        // Y axis label
+        let y_axis_label = format!("{:.3}", y_max);
         draw_text(
-            &format!("{:.3}", y_max),
-            x + 4.0,
-            plot_y + top_label_h,
+            &y_axis_label,
+            plot_x + plot_w - measure_text(&y_axis_label, None, 16, 1.0).width - 4.0,
+            plot_y + 16.0,
             label_size,
             label_color,
         );
 
+        // Graph line
         let sample_count = self.samples.len();
         let t_start = self.samples.first().map(|(time, _)| *time).unwrap_or(0.0);
         let t_end = self.samples.last().map(|(time, _)| *time).unwrap_or(0.0);
@@ -150,8 +147,8 @@ pub fn draw_sidebar(graphs: &[MetricGraph]) {
     );
 
     let top = 16.0;
-    let bottom = 20.0;
-    let gap = 30.0;
+    let bottom = 30.0;
+    let gap = 40.0;
     let graph_count = graphs.len().max(1) as f32;
     let graph_height = (screen_height() - top - bottom - gap * (graph_count - 1.0)) / graph_count;
 
