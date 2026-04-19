@@ -22,39 +22,67 @@ impl Default for ControlPanel {
 
 impl ControlPanel {
     pub fn draw(&self, kappa: f32, constant_acceleration: bool) {
-        let panel_h = CONTROL_PANEL_HEIGHT;
-
-        draw_rectangle_lines(self.x, self.y, self.w, panel_h, 2.0, LIGHTGRAY);
+        // Panel border
+        draw_rectangle_lines(self.x, self.y, self.w, CONTROL_PANEL_HEIGHT, 2.0, LIGHTGRAY);
 
         let text_x = self.x + 12.0;
-        let mut cursor_y = self.y + 22.0;
+        let mut cursor_y = self.y + 24.0;
+        let label_x = text_x;
 
-        draw_text("Controls", text_x, cursor_y, 20.0, DARKGRAY);
-        cursor_y += 22.0;
+        let draw_key_hint = |label: &str, y: f32| {
+            let x = self.x + self.w - measure_text(label, None, 18, 1.0).width - 12.0;
+            draw_text(label, x, y, 18.0, DARKGRAY);
+        };
 
-        draw_text("[a]", text_x, cursor_y, 18.0, DARKGRAY);
+        draw_text("Controls", text_x, cursor_y, 22.0, DARKGRAY);
+        cursor_y += 32.0;
+
+        // Interaction range
         draw_text(
             &format!("Interaction Range: {:.1}", kappa),
-            text_x + 40.0,
+            label_x,
             cursor_y,
             18.0,
             DARKGRAY,
         );
-        draw_text("[d]", self.x + self.w - 30.0, cursor_y, 18.0, DARKGRAY);
+        draw_key_hint("[a/d]", cursor_y);
         cursor_y += 18.0;
 
         draw_text(
             "(multiplier on desired distance)",
-            text_x + 40.0,
+            label_x,
             cursor_y,
             14.0,
             GRAY,
         );
         cursor_y += 22.0;
 
+        // Constant acceleration + checkbox
+        let text_size = draw_text("Constant Acceleration:", label_x, cursor_y, 18.0, DARKGRAY);
+
         let checkbox_size = 14.0;
-        let checkbox_x = text_x;
-        let checkbox_y = cursor_y - checkbox_size + 2.0;
+        Self::draw_checkbox(
+            checkbox_size,
+            self.x + text_size.width + 16.0,
+            cursor_y - checkbox_size + 2.0,
+            constant_acceleration,
+        );
+
+        draw_key_hint("[w]", cursor_y);
+        cursor_y += 24.0;
+
+        // Restart
+        draw_text(
+            "Restart with new parameters",
+            label_x,
+            cursor_y,
+            18.0,
+            DARKGRAY,
+        );
+        draw_key_hint("[r]", cursor_y);
+    }
+
+    fn draw_checkbox(checkbox_size: f32, checkbox_x: f32, checkbox_y: f32, checked: bool) {
         draw_rectangle_lines(
             checkbox_x,
             checkbox_y,
@@ -63,7 +91,7 @@ impl ControlPanel {
             1.0,
             DARKGRAY,
         );
-        if constant_acceleration {
+        if checked {
             draw_line(
                 checkbox_x + 3.0,
                 checkbox_y + checkbox_size * 0.6,
@@ -81,24 +109,5 @@ impl ControlPanel {
                 DARKGRAY,
             );
         }
-
-        draw_text(
-            "Constant Acceleration",
-            checkbox_x + 24.0,
-            cursor_y,
-            18.0,
-            DARKGRAY,
-        );
-        draw_text("[w]", self.x + self.w - 30.0, cursor_y, 18.0, DARKGRAY);
-        cursor_y += 24.0;
-
-        draw_text(
-            "Restart with new parameters",
-            text_x,
-            cursor_y,
-            18.0,
-            DARKGRAY,
-        );
-        draw_text("[r]", self.x + self.w - 30.0, cursor_y, 18.0, DARKGRAY);
     }
 }
