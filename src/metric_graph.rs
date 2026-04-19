@@ -125,11 +125,11 @@ fn nice_ceil(value: f32) -> f32 {
     rounded * base
 }
 
-pub fn draw_sidebar(graphs: &[MetricGraph]) {
+pub fn draw_sidebar(graphs: &[MetricGraph], top_offset: f32) {
     let panel_x = screen_width() - SIDEBAR_WIDTH;
     draw_line(panel_x, 0.0, panel_x, screen_height(), 1.0, DARKGRAY);
 
-    let top = 16.0;
+    let top = top_offset;
     let bottom = 30.0;
     let gap = 40.0;
     let graph_count = graphs.len().max(1) as f32;

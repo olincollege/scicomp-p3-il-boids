@@ -24,10 +24,18 @@ impl Boid {
         draw_triangle(tip, left_base, right_base, BLACK);
     }
 
-    pub fn update(&mut self, boids: &[Boid], dt: f32) {
-        self.velocity += self.alg_1(boids) * dt;
+    pub fn update(
+        &mut self,
+        boids: &[Boid],
+        dt: f32,
+        interaction_range: f32,
+        constant_acceleration: bool,
+    ) {
+        self.velocity += self.alg_1(boids, interaction_range) * dt;
         self.velocity += self.avoid_borders() * dt;
-        self.velocity += self.accelerate_to_target_speed() * dt;
+        if constant_acceleration {
+            self.velocity += self.accelerate_to_target_speed() * dt;
+        }
         self.position += self.velocity * dt;
     }
 
@@ -72,31 +80,32 @@ impl Boid {
         }
     }
 
-    fn alg_1(&self, boids: &[Boid]) -> Vec2 {
-        return self.gradient_term(boids) + self.consensus_term(boids);
+    fn alg_1(&self, boids: &[Boid], interaction_range: f32) -> Vec2 {
+        return self.gradient_term(boids, interaction_range)
+            + self.consensus_term(boids, interaction_range);
     }
 
     /// Calculate full gradient term for a boid based on all other boids in the system.
-    fn gradient_term(&self, boids: &[Boid]) -> Vec2 {
+    fn gradient_term(&self, boids: &[Boid], interaction_range: f32) -> Vec2 {
         let mut total_gradient = Vec2::ZERO;
         for boid in boids {
             if std::ptr::eq(boid, self) {
                 continue;
             }
             let (norm_dist, grad) = math::sigma_calc(self.position, boid.position);
-            let action = math::action_function(norm_dist);
+            let action = math::action_function(norm_dist, interaction_range);
             total_gradient += action * grad;
         }
         return total_gradient;
     }
 
-    fn consensus_term(&self, boids: &[Boid]) -> Vec2 {
+    fn consensus_term(&self, boids: &[Boid], interaction_range: f32) -> Vec2 {
         let mut total_consensus = Vec2::ZERO;
         for boid in boids {
             if std::ptr::eq(boid, self) {
                 continue;
             }
-            let adjacency = math::adjacency_weight(self.position, boid.position);
+            let adjacency = math::adjacency_weight(self.position, boid.position, interaction_range);
             total_consensus += adjacency * (boid.velocity - self.velocity);
         }
         return total_consensus;

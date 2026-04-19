@@ -11,7 +11,7 @@ use macroquad::prelude::Vec2;
 /// Bypasses calculating the full Laplacian and instead uses union-find to count number of flocks.
 /// Returns value between `1.0` and `0.0`.`1.0` when all boids are in a single flock, and `0.0`
 /// when all boids are isolated.
-pub fn relative_connectivity(boids: &[Boid]) -> f32 {
+pub fn relative_connectivity(boids: &[Boid], interaction_range: f32) -> f32 {
     let n = boids.len();
     if n <= 1 {
         return 1.0;
@@ -31,7 +31,7 @@ pub fn relative_connectivity(boids: &[Boid]) -> f32 {
     for i in 0..n {
         for j in (i + 1)..n {
             let (norm_dist, _) = math::sigma_calc(boids[i].position, boids[j].position);
-            if norm_dist < ATTRACTION_RANGE {
+            if norm_dist < interaction_range {
                 let ri = find(&mut parent, i);
                 let rj = find(&mut parent, j);
                 if ri != rj {
@@ -68,14 +68,14 @@ pub fn cohesion_radius(boids: &[Boid]) -> f32 {
 ///
 /// Returns positive value roughly below `1.0` (not mathematically bounded) where `0.0` indicates
 /// all boids are exactly at desired distance from each other.
-pub fn normalized_deviation_energy(boids: &[Boid]) -> f32 {
+pub fn normalized_deviation_energy(boids: &[Boid], interaction_range: f32) -> f32 {
     let mut total = 0.0;
     let mut edge_count = 0;
 
     for i in 0..boids.len() {
         for j in (i + 1)..boids.len() {
             let dist: f32 = (boids[i].position - boids[j].position).length();
-            if dist < ATTRACTION_RANGE {
+            if dist < interaction_range {
                 total += (dist - DESIRED_DISTANCE).powi(2);
                 edge_count += 1;
             }

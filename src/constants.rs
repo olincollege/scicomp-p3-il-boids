@@ -1,9 +1,10 @@
 // ==== SIMULATION CONTROL CONSTANTS ====
 pub const DESIRED_DISTANCE: f32 = 70.0;
-pub const ATTRACTION_RANGE: f32 = DESIRED_DISTANCE * KAPPA;
 
-/// ATTRACTION_RANGE = DESIRED_DISTANCE * KAPPA
-pub const KAPPA: f32 = 1.5;
+/// Interaction range multiplier (ATTRACTION_RANGE = DESIRED_DISTANCE * KAPPA)
+pub const DEFAULT_KAPPA: f32 = 1.5;
+pub const KAPPA_STEP: f32 = 0.1;
+pub const MIN_KAPPA: f32 = 0.1;
 
 pub const ATTRACTION_GAIN: f32 = 5.0;
 pub const REPULSION_GAIN: f32 = 8.0;
