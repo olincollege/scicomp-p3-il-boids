@@ -1,14 +1,18 @@
+//! Main entry point and simulation loop
+
 mod boid;
 mod constants;
 mod math;
 mod metrics;
 mod ui;
 
+use macroquad::prelude::*;
+
 use boid::Boid;
 use constants::*;
-use macroquad::prelude::*;
 use ui::sidebar::Sidebar;
 
+/// Window configuration for macroquad
 fn window_conf() -> Conf {
     Conf {
         window_title: WINDOW_TITLE.to_string(),
@@ -19,6 +23,7 @@ fn window_conf() -> Conf {
     }
 }
 
+/// Initializes boids with random positions and velocities
 fn init_boids() -> Vec<Boid> {
     let mut boids = Vec::with_capacity(NUM_BOIDS);
 
@@ -36,8 +41,6 @@ fn init_boids() -> Vec<Boid> {
 
     boids
 }
-
-// TODO: make constants constant until reset
 
 #[macroquad::main(window_conf)]
 async fn main() {
