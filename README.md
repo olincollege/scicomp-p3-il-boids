@@ -1,7 +1,9 @@
 # Flocking Simulation
 
 Boid flocking simulation, replicating results from the paper
-[R. Olfati-Saber, "Flocking for multi-agent dynamic systems: algorithms and theory", 2006](https://ieeexplore.ieee.org/abstract/document/1605401).
+[R. Olfati-Saber, "Flocking for multi-agent dynamic systems: algorithms and theory", 2006](https://ieeexplore.ieee.org/abstract/document/1605401),
+with inspiration from
+[Ben Eater's implementation (GitHub)](https://github.com/beneater/boids).
 
 ![](img/title_gif.gif)
 
@@ -117,7 +119,8 @@ is toggleable.
 
 Olfati-Saber's simulation has no borders, and boids are allowed to fly out of
 frame. I wanted to keep all boids in frame, so I added a force that pushes boids
-back towards the center of the screen when they get close to the border.
+back towards the center of the screen when they get close to the border. This is
+the same implementation used by [Ben Eater](https://github.com/beneater/boids).
 
 ## Results
 
@@ -144,3 +147,44 @@ As such, deviation energy will not reduce by too much even when flocks appear to
 form.
 
 ### Without Constant Acceleration
+
+#### Interaction Range = 1.2
+
+An interaction range of 1.2 is used in Olfati-Saber's paper, and the results
+match that with this interaction range, the basic flocking algorithm
+(algorithm 1) does not lead to stable flocking.
+
+Looking at the metrics, while velocity mismatch drops from the initial value,
+connectivity and cohesion radius remain high, indicating no stable flocking.
+
+![](img/k1.2_no_accel.gif)
+
+Olfati-Saber stops here with algorithm 1, concluding that algorithm 1 will lead
+to fragmentation. However, I found that algorithm 1 can lead to stable flocking
+with a higher interaction range.
+
+#### Interaction Range = 1.5
+
+With an interaction range of 1.5, various stable flocks begin to form after a
+minute of simulation time. This can be seen in the rise in connectivity and drop
+in velocity mismatch. However, cohesion radius and deviation energy remain
+relatively unchanged, as there is not one main flock.
+
+That one main flock may form with more time, but as mentioned in
+[Differences from Olfati-Saber, Constant Acceleration](#constant-acceleration),
+the boids slow to a halt once they enter a perfect lattice.
+
+![](img/k1.5_no_accel.gif)
+
+#### Interaction Range = 2.2
+
+With an interaction range of 2.2, the fragmented flocks are able to form into
+three main flocks after about two minutes of simulation time.
+
+Connectivity nearly reaches 1, and velocity mismatch drops very low. Deviation
+energy drops slightly from the initial value. Cohesion radius remains high
+however, as the large flocks are on the opposite sides of the screen, meaning
+the average position of all boids is in the middle of the screen, far from all
+boids.
+
+![](img/k2.2_no_accel.gif)
