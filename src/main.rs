@@ -37,13 +37,17 @@ fn init_boids() -> Vec<Boid> {
     boids
 }
 
+// TODO: make constants constant until reset
+
 #[macroquad::main(window_conf)]
 async fn main() {
     // Sim state variables
     rand::srand(42);
     let mut sim_time = 0.0_f32;
-    let mut kappa = DEFAULT_KAPPA;
-    let mut constant_acceleration = true;
+    let mut active_kappa = DEFAULT_KAPPA;
+    let mut active_constant_acceleration = true;
+    let mut pending_kappa = DEFAULT_KAPPA;
+    let mut pending_constant_acceleration = true;
 
     // Initialize boids
     let mut boids = init_boids();
@@ -60,33 +64,40 @@ async fn main() {
 
         // Handle input
         if is_key_pressed(KeyCode::A) {
-            kappa = (kappa - KAPPA_STEP).clamp(MIN_KAPPA, MAX_KAPPA);
+            pending_kappa = (pending_kappa - KAPPA_STEP).clamp(MIN_KAPPA, MAX_KAPPA);
         }
         if is_key_pressed(KeyCode::D) {
-            kappa += KAPPA_STEP;
+            pending_kappa = (pending_kappa + KAPPA_STEP).clamp(MIN_KAPPA, MAX_KAPPA);
         }
         if is_key_pressed(KeyCode::W) {
-            constant_acceleration = !constant_acceleration;
+            pending_constant_acceleration = !pending_constant_acceleration;
         }
         if is_key_pressed(KeyCode::R) {
             boids = init_boids();
             boids_prior.clear();
             sidebar.reset();
             sim_time = 0.0;
+            active_kappa = pending_kappa;
+            active_constant_acceleration = pending_constant_acceleration;
         }
 
-        let interaction_range = DESIRED_DISTANCE * kappa;
+        let interaction_range = DESIRED_DISTANCE * active_kappa;
 
         // Update and draw boids
         boids_prior.clone_from(&boids);
         for boid in &mut boids {
-            boid.update(&boids_prior, dt, interaction_range, constant_acceleration);
+            boid.update(
+                &boids_prior,
+                dt,
+                interaction_range,
+                active_constant_acceleration,
+            );
             boid.draw();
         }
 
         // Update metric graphs, draw sidebar
         sidebar.update_metric_graphs(sim_time, &boids, interaction_range);
-        sidebar.draw(kappa, constant_acceleration);
+        sidebar.draw(pending_kappa, pending_constant_acceleration);
 
         next_frame().await
     }
