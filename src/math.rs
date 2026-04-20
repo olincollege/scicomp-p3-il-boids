@@ -3,8 +3,8 @@ use macroquad::prelude::Vec2;
 use crate::constants::*;
 
 /// Calculates sigma normlized distance and gradient vector between two points.
-pub fn sigma_calc(p1: Vec2, p2: Vec2) -> (f32, Vec2) {
-    let diff = p2 - p1;
+pub fn sigma_calc(position_1: Vec2, position_2: Vec2) -> (f32, Vec2) {
+    let diff = position_2 - position_1;
     let scaling_factor = (1.0 + SIGMA_EPSILON * diff.length_squared()).sqrt();
 
     // Sigma normalizaed distance
@@ -28,8 +28,9 @@ pub fn action_function(norm_dist: f32, interaction_range: f32) -> f32 {
     return out;
 }
 
-pub fn adjacency_weight(p1: Vec2, p2: Vec2, interaction_range: f32) -> f32 {
-    let (norm_dist, _) = sigma_calc(p1, p2);
+// Interaction weight between two boids, based on their distance
+pub fn adjacency_weight(position_1: Vec2, position_2: Vec2, interaction_range: f32) -> f32 {
+    let (norm_dist, _) = sigma_calc(position_1, position_2);
     return bump(norm_dist / interaction_range);
 }
 
