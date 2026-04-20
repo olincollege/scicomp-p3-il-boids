@@ -1,8 +1,8 @@
+// Panel displaying user key inputs
+
 use macroquad::prelude::*;
 
-use crate::constants::{HIGHLIGHT_COLOR, SIDEBAR_WIDTH};
-
-pub const CONTROL_PANEL_HEIGHT: f32 = 140.0;
+use crate::constants::{CONTROL_PANEL_HEIGHT, HIGHLIGHT_COLOR, SIDEBAR_WIDTH};
 
 pub struct ControlPanel {
     pub x: f32,

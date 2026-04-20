@@ -1,3 +1,5 @@
+//! Four metrics defined in Olfati-Saber's paper for evaluating flock quality
+
 use crate::Boid;
 use crate::constants::*;
 use crate::math;

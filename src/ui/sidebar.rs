@@ -1,6 +1,8 @@
-use super::control_panel::{CONTROL_PANEL_HEIGHT, ControlPanel};
+//! Sidebar UI component for displaying control panel and metric graphs
+
+use super::control_panel::ControlPanel;
 use super::metric_graph::MetricGraph;
-use crate::constants::{HIGHLIGHT_COLOR, SIDEBAR_WIDTH};
+use crate::constants::{CONTROL_PANEL_HEIGHT, HIGHLIGHT_COLOR, SIDEBAR_WIDTH};
 use crate::{Boid, metrics};
 use macroquad::prelude::*;
 

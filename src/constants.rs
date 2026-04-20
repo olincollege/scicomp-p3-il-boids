@@ -1,3 +1,5 @@
+//! Simulation constants for algorithm and appearance
+
 use macroquad::prelude::Color;
 
 // ==== SIMULATION CONTROL CONSTANTS ====
@@ -39,3 +41,4 @@ pub const WINDOW_TITLE: &str = "Boid Simulation";
 pub const SIDEBAR_WIDTH: f32 = 320.0;
 pub const SIDEBAR_MARGIN: f32 = 20.0;
 pub const HIGHLIGHT_COLOR: Color = Color::from_rgba(240, 158, 22, 255);
+pub const CONTROL_PANEL_HEIGHT: f32 = 140.0;

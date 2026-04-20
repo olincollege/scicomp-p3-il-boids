@@ -1,3 +1,5 @@
+//! Graph for plotting time series metrics in the sidebar
+
 use macroquad::prelude::*;
 
 pub struct MetricGraph {
@@ -112,6 +114,7 @@ impl MetricGraph {
     }
 }
 
+/// Rounds a value up to a "nice" number for graph y-axis label
 fn nice_ceil(value: f32) -> f32 {
     let exponent = value.log10().floor();
     let base = 10_f32.powf(exponent);
@@ -122,4 +125,3 @@ fn nice_ceil(value: f32) -> f32 {
 
     rounded * base
 }
-
