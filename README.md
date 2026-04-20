@@ -3,7 +3,7 @@
 Boid flocking simulation, replicating results from the paper
 [R. Olfati-Saber, "Flocking for multi-agent dynamic systems: algorithms and theory", 2006](https://ieeexplore.ieee.org/abstract/document/1605401).
 
-![](img/title_image.png)
+![](img/title_gif.gif)
 
 ## Usage
 
@@ -142,3 +142,5 @@ Olfati-Saber defines four metrics to determine what constitutes a flock:
 will often reach equilibrium by overlapping each other in the center of a flock.
 As such, deviation energy will not reduce by too much even when flocks appear to
 form.
+
+### Without Constant Acceleration
