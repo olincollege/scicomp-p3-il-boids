@@ -3,6 +3,8 @@
 Boid flocking simulation, replicating results from the paper
 [R. Olfati-Saber, "Flocking for multi-agent dynamic systems: algorithms and theory", 2006](https://ieeexplore.ieee.org/abstract/document/1605401).
 
+![](img/title_image.png)
+
 ## Usage
 
 The simulation can be run online
@@ -46,6 +48,22 @@ cargo run
 - [r]: Resets the simulation, applying the current interaction range and
   constant acceleration settings.
 
+## Project Structure
+
+```
+src/
+├── boid.rs                     // Boid object with flocking algorithm
+├── constants.rs                // Simulation constants
+├── math.rs                     // Static math functions
+├── main.rs                     // Entry point and main simulation
+├── metrics.rs                  // Four metrics for evaluating flock quality
+└── ui/
+    ├── control_panel.rs        // Instruction panel
+    ├── metric_graph.rs         // Graphs of metrics
+    ├── mod.rs                  // Rust standard for defining module
+    └── sidebar.rs              // Overall sidebar layout
+```
+
 ## Simulation Overview
 
 ### Background
@@ -75,12 +93,12 @@ flocking. There is no top down force in the simulation. Instead, the flocks are
 an emergent behavior of each boid follows the flocking algorithm. The basic
 flocking which consists of two main parts:
 
-1. Gradient-based term: This term pushes the boid to a set desired distance from
-   its neighbors, attracting to boids that are too far away and repelling from
-   boids that are too close. Formally, this is the negative gradient of the
+1. **Gradient-based term:** This term pushes the boid to a set desired distance
+   from its neighbors, attracting to boids that are too far away and repelling
+   from boids that are too close. Formally, this is the negative gradient of the
    collective potential energy function, which is minimized when all agents are
    at the desired distance..
-2. Consensus term: This is the velocity matching term, pushing the boid's
+2. **Consensus term:** This is the velocity matching term, pushing the boid's
    velocity towards a weighted average of its neighbors' velocities, based on
    distance.
 
@@ -93,7 +111,7 @@ perfect lattice (all spaced at the desired distance) they have have no incentive
 to continue moving and end up nearly stationary. To keep the simulation moving,
 I added a small constant acceleration to each boid. This does change which
 interaction ranges lead to stable flocking, and thus this constant acceleration
-is togglable.
+is toggleable.
 
 #### Border Avoidance
 
@@ -104,3 +122,23 @@ back towards the center of the screen when they get close to the border.
 ## Results
 
 ### Metrics
+
+Olfati-Saber defines four metrics to determine what constitutes a flock:
+
+1. **Connectivity:** A value from 0 to 1, where 1 indicates all birds are in one
+   flock and 0 indicates no connectivity. Calculated as $\frac{n-c}{n-1}$ where
+   $n$ is the number of boids and $c$ is the number of flocks.
+2. **Cohesion Radius:** The maximum distance from the flock center to any boid
+   in the system. Minimizing this value indicates a cohesive flock.
+3. **Deviation Energy\*:** The amount of energy needed to get each boid to a
+   desired distance away from other boids. A positive value roughly below 1 (not
+   mathematically defined bounded). A value of 0 indicates all boids are exactly
+   at the desired distance from each other.
+4. **Velocity Mismatch**: The average difference in velocity between each boid
+   and the average velocity of all boids in the system. A value of 0 indicates
+   all boids are moving at the same velocity.
+
+\* Deviation Energy was difficult to minimize in my implementation, as boids
+will often reach equilibrium by overlapping each other in the center of a flock.
+As such, deviation energy will not reduce by too much even when flocks appear to
+form.
