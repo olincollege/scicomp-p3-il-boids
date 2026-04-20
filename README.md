@@ -99,7 +99,7 @@ flocking which consists of two main parts:
    from its neighbors, attracting to boids that are too far away and repelling
    from boids that are too close. Formally, this is the negative gradient of the
    collective potential energy function, which is minimized when all agents are
-   at the desired distance..
+   at the desired distance.
 2. **Consensus term:** This is the velocity matching term, pushing the boid's
    velocity towards a weighted average of its neighbors' velocities, based on
    distance.
