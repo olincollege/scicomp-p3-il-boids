@@ -1,3 +1,5 @@
+//! Static math functions used Olfati-Saber's flocking algorithms
+
 use macroquad::prelude::Vec2;
 
 use crate::constants::*;
