@@ -5,7 +5,7 @@ Boid flocking simulation, replicating results from the paper
 with inspiration from
 [Ben Eater's implementation (GitHub)](https://github.com/beneater/boids).
 
-![](img/title_gif.gif)
+![](img/k1.5_with_accel.gif)
 
 ## Usage
 
@@ -124,6 +124,8 @@ the same implementation used by [Ben Eater](https://github.com/beneater/boids).
 
 ## Results
 
+All simulations below are run with 100 boids.
+
 ### Metrics
 
 Olfati-Saber defines four metrics to determine what constitutes a flock:
@@ -188,3 +190,48 @@ the average position of all boids is in the middle of the screen, far from all
 boids.
 
 ![](img/k2.2_no_accel.gif)
+
+#### Interaction Range = 4.0
+
+Even with an interaction range of 4.0, the boids are not able to form into one
+main flock after two minutes of simulation time. Flocks move too slowly to find
+each other, even with an increased interaction range.
+
+Additionally, overlapping of boids is much more common with a higher interaction
+range, likely because all boids are attracted towards the very center of the
+flock.
+
+![](img/k4.0_no_accel.gif)
+
+### With Constant Acceleration
+
+#### Interaction Range = 1.5
+
+Adding constant acceleration to a 1.5 interaction range leads to much more
+movement even after flocks form. However, this movement causes flocks to
+frequently break and reform.
+
+This can be seen in the metrics, as cohesion radius, deviation energy, and
+velocity mismatch all continue to fluctuate. Connectivity increases from its
+initial value, then similarly begins to fluctuate.
+
+![](img/k1.5_with_accel.gif)
+
+#### Interaction Range = 2.2
+
+Similarly to the case with no constant acceleration, an interaction range of 2.2
+leads to a few main flocks after a minute and a half of simulation time.
+However, in this case the flocks remain more dynamic, leading to a higher chance
+of these flocks finding each other.
+
+![](img/k2.2_with_accel.gif)
+
+#### Interaction Range = 4.0
+
+When constant acceleration is added to an interaction range of 4.0, all but one
+of the boids are able to find each other after a minute and a half of simulation
+time. However, due to the high amounts of overlap that come with higher
+interaction ranges, the main flock has very little area, making it difficult for
+that final boid to find the main flock.
+
+![](img/k4.0_with_accel.gif)
